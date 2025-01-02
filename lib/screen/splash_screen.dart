@@ -96,7 +96,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'home_page.dart';
+import 'student/student_home.dart';
 import 'login_page.dart';
 
 class Splash extends StatefulWidget {
