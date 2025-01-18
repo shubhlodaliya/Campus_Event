@@ -65,6 +65,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../admin/admin_home.dart';
 import '/screen/login_page.dart';
+import 'event_detail.dart';
 
 class HomePage extends StatelessWidget {
   Future<void> logout(BuildContext context) async {
@@ -281,7 +282,7 @@ class HomePage extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 10),
-                          ElevatedButton(
+                          TextButton(
                             child: Text(
                               'More details >>>',
                               style: TextStyle(
@@ -294,7 +295,7 @@ class HomePage extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => AddEventScreen(),
+                                  builder: (context) => EventDetailsPage(),
                                 ),
                               )
                             },

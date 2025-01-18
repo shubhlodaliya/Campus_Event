@@ -221,7 +221,8 @@
 // }
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'student/student_home.dart';
+import 'student/student_home.dart'; // Replace with actual student home page
+import 'admin/admin_home.dart'; // Replace with actual admin home page
 import 'signup_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -242,7 +243,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final response = await http.post(
-      Uri.parse('http://192.168.235.47:3000/api/users/login'), // Replace with your API URL
+      Uri.parse('http://192.168.137.47:3000/api/users/login'), // Replace with your API URL
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'password': password}),
     );
@@ -256,11 +257,20 @@ class _LoginPageState extends State<LoginPage> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isLoggedIn', true);
 
-      // Navigate to the home page
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
+      // Redirect based on the email
+      if (email == 'admin@charusat.edu.in') {
+        // Navigate to admin home page
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => AddEventScreen()),
+        );
+      } else {
+        // Navigate to student home page
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      }
     } else {
       // Show custom error dialog
       showCustomAlert(context, 'Invalid credentials. Please try again!');
