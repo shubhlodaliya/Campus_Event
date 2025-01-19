@@ -312,6 +312,7 @@ class HomePage extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
+
                 child: Column(
                   children: [
                     Image.asset(

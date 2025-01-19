@@ -422,7 +422,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   }
 
   Future<List<Event>> fetchEventDataFromApi() async {
-    const String apiUrl = "http://192.168.137.47:3000/api/events";
+    const String apiUrl = "http://192.168.179.47:3000/api/events";
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
       final Map<String, dynamic> json = jsonDecode(response.body);

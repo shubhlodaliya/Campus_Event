@@ -78,7 +78,7 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      const String apiUrl = "http://192.168.137.47:3000/api/events";
+      const String apiUrl = "http://192.168.179.47:3000/api/events";
 
       try {
         final response = await http.post(
