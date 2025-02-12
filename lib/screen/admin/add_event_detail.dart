@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import '../../model/event.dart';
+import 'admin_home.dart';
 
 class AddEventDetailPage extends StatefulWidget {
   @override
@@ -24,6 +25,7 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
   String? time;
   String? venue;
   String? guest;
+  String? catagory;
 
   Future<void> _pickImage() async {
     final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
@@ -90,9 +92,10 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
             'organizedBy': organizedBy,
             'description': description,
             'date': date,
-            'time': "06:55:00", // Fix time formatting as needed
+            'time': time,
             'venue': venue,
             'guest': guest,
+            'catagory':catagory,
           }),
         );
 
@@ -101,11 +104,11 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
             SnackBar(content: Text('Event added successfully!')),
           );
 
-          // Call fetchEventData() after successful submission
-          final List<Event> updatedEvents = await fetchEventData();
-
-          // Handle the updated events (e.g., refresh a list or UI)
-          print('Fetched ${updatedEvents.length} events');
+          // Navigate to Admin Home Page after successful event submission
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => AddEventScreen()),
+          );
         } else {
           final responseBody = jsonDecode(response.body);
           final errorMessage = responseBody['message'] ?? 'Unknown error';
@@ -120,7 +123,6 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -197,7 +199,7 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
                         border: InputBorder.none,
                       ),
                       items: [
-                        DropdownMenuItem(value: 'CS', child: Text('Computer Science')),
+                        DropdownMenuItem(value: 'CSE', child: Text('Computer Science')),
                         DropdownMenuItem(value: 'IT', child: Text('Information Technology')),
                         DropdownMenuItem(value: 'EC', child: Text('Electronics and Communication')),
                       ],
@@ -210,6 +212,35 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
                     ),
                   ),
                 ),
+                SizedBox(height: 16),
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        labelText: 'Select Category',
+                        border: InputBorder.none,
+                      ),
+                      items: [
+
+                        DropdownMenuItem(value: 'Sports', child: Text('Sports')),
+                        DropdownMenuItem(value: 'Vrund', child: Text('Vrund')),
+                        DropdownMenuItem(value: 'Workshop', child: Text('Workshop')),
+                        DropdownMenuItem(value: 'Placement', child: Text('Placement')),
+                        DropdownMenuItem(value: 'Expert Talk', child: Text('Expert Talk')),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          catagory = value;
+                        });
+                      },
+                      validator: (value) => value == null ? 'Please select a category' : null,
+                    ),
+                  ),
+                ),
+
                 SizedBox(height: 16),
                 _buildTextField('Event Name', (value) => eventName = value, 'Enter event name'),
                 SizedBox(height: 16),

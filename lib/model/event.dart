@@ -11,6 +11,7 @@ class Event {
   final String time;
   final String venue;
   final String guest;
+  final String catagory;
   final String? image;
 
   Event({
@@ -23,6 +24,7 @@ class Event {
     required this.time,
     required this.venue,
     required this.guest,
+    required this.catagory,
     this.image,
   });
 
@@ -37,6 +39,7 @@ class Event {
       time: json['time'],
       venue: json['venue'],
       guest: json['guest'],
+      catagory: json['catagory'],
       image: json['image'], // Nullable field
     );
   }
@@ -50,6 +53,7 @@ String date = 'N/A';
 String time = 'N/A';
 String venue = 'N/A';
 String guest = 'N/A';
+String catagory = 'N/A';
 
 bool isLoading = true;
 Future<List<Event>> fetchEventData() async {
