@@ -1,4 +1,5 @@
 
+import 'package:event_mnager/screen/admin/upload_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -80,7 +81,7 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      const String apiUrl = "http://192.168.179.47:3000/api/events";
+      const String apiUrl = "http://192.168.102.47:3000/api/events";
 
       try {
         final response = await http.post(
@@ -147,6 +148,18 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
             icon: Icon(Icons.check),
             onPressed: () => submitData(),
           ),
+          IconButton(
+            icon: Icon(Icons.image),
+            onPressed: () {
+              // Navigate to the ImageUploadScreen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ImageUploadScreen(eventId: 'eventId'), // Replace with actual event ID
+                ),
+              );
+            },
+          ),
         ],
       ),
       body: Padding(
@@ -202,6 +215,7 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
                         DropdownMenuItem(value: 'CSE', child: Text('Computer Science')),
                         DropdownMenuItem(value: 'IT', child: Text('Information Technology')),
                         DropdownMenuItem(value: 'EC', child: Text('Electronics and Communication')),
+                        DropdownMenuItem(value: 'AIML', child: Text('AIML')),
                       ],
                       onChanged: (value) {
                         setState(() {
@@ -230,6 +244,7 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
                         DropdownMenuItem(value: 'Workshop', child: Text('Workshop')),
                         DropdownMenuItem(value: 'Placement', child: Text('Placement')),
                         DropdownMenuItem(value: 'Expert Talk', child: Text('Expert Talk')),
+                        DropdownMenuItem(value: 'Compitition', child: Text('Compitition')),
                       ],
                       onChanged: (value) {
                         setState(() {

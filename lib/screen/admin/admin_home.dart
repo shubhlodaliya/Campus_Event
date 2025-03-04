@@ -22,7 +22,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
   // Fetch events from the API
   Future<void> fetchEvents() async {
-    const String apiUrl = "http://192.168.179.47:3000/api/events"; // Update with your API URL
+    const String apiUrl = "http://192.168.102.47:3000/api/events"; // Update with your API URL
 
     try {
       final response = await http.get(Uri.parse(apiUrl));

@@ -43,6 +43,19 @@ class Event {
       image: json['image'], // Nullable field
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'department': department,
+      'eventName': eventName,
+      'organizedBy': organizedBy,
+      'description': description,
+      'date': date,
+      'time': time,
+      'venue': venue,
+      'guest': guest,
+      'catagory': catagory,
+    };
+  }
 }
 String department = 'N/A';
 String image = '';

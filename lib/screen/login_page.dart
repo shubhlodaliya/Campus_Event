@@ -237,13 +237,52 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
 
+  // Future<void> login(String email, String password) async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //
+  //   final response = await http.post(
+  //     Uri.parse('http://192.168.102.47:3000/api/users/login'), // Replace with your API URL
+  //     headers: {'Content-Type': 'application/json'},
+  //     body: jsonEncode({'email': email, 'password': password}),
+  //   );
+  //
+  //   setState(() {
+  //     isLoading = false;
+  //   });
+  //
+  //   if (response.statusCode == 200) {
+  //     // Save login state in SharedPreferences
+  //     final prefs = await SharedPreferences.getInstance();
+  //     await prefs.setBool('isLoggedIn', true);
+  //
+  //     // Redirect based on the email
+  //     if (email == 'admin@charusat.edu.in') {
+  //       // Navigate to admin home page
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(builder: (context) => AddEventScreen()),
+  //       );
+  //     } else {
+  //       // Navigate to student home page
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(builder: (context) => HomePage()),
+  //       );
+  //     }
+  //   } else {
+  //     // Show custom error dialog
+  //     showCustomAlert(context, 'Invalid credentials. Please try again!');
+  //   }
+  // }
   Future<void> login(String email, String password) async {
     setState(() {
       isLoading = true;
     });
 
     final response = await http.post(
-      Uri.parse('http://192.168.179.47:3000/api/users/login'), // Replace with your API URL
+      Uri.parse('http://192.168.102.47:3000/api/users/login'), // Your API URL
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'password': password}),
     );
@@ -253,29 +292,28 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     if (response.statusCode == 200) {
-      // Save login state in SharedPreferences
+      // Save login state & email in SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isLoggedIn', true);
+      await prefs.setString('email', email); // Store the email
 
       // Redirect based on the email
       if (email == 'admin@charusat.edu.in') {
-        // Navigate to admin home page
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => AddEventScreen()),
         );
       } else {
-        // Navigate to student home page
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
         );
       }
     } else {
-      // Show custom error dialog
       showCustomAlert(context, 'Invalid credentials. Please try again!');
     }
   }
+
 
   void showCustomAlert(BuildContext context, String message) {
     showDialog(
