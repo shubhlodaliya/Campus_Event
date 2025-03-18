@@ -27,6 +27,10 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
   String? venue;
   String? guest;
   String? catagory;
+  String? email;
+  String? mobile;
+  int? seats;
+
 
   Future<void> _pickImage() async {
     final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
@@ -81,7 +85,7 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      const String apiUrl = "http://192.168.102.47:3000/api/events";
+      const String apiUrl = "http://192.168.55.47:3000/api/events";
 
       try {
         final response = await http.post(
@@ -97,6 +101,9 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
             'venue': venue,
             'guest': guest,
             'catagory':catagory,
+            'email': email,
+            'mobile': mobile,
+            'seats': seats,
           }),
         );
 
@@ -108,7 +115,7 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
           // Navigate to Admin Home Page after successful event submission
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => AddEventScreen()),
+            MaterialPageRoute(builder: (context) => AddEventDetailPage()),
           );
         } else {
           final responseBody = jsonDecode(response.body);
@@ -170,36 +177,6 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // GestureDetector(
-                //   onTap: _pickImage,
-                //   child: Card(
-                //     elevation: 4,
-                //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                //     child: Container(
-                //       height: 150,
-                //       decoration: BoxDecoration(
-                //         borderRadius: BorderRadius.circular(10),
-                //         color: Colors.grey[200],
-                //       ),
-                //       child: Center(
-                //         child: image == null
-                //             ? Text(
-                //           'Tap to select an image',
-                //           style: TextStyle(color: Colors.grey, fontSize: 16),
-                //         )
-                //             : ClipRRect(
-                //           borderRadius: BorderRadius.circular(10),
-                //           child: Image.file(
-                //             image!,
-                //             fit: BoxFit.cover,
-                //             width: double.infinity,
-                //             height: double.infinity,
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // ),
                 SizedBox(height: 20),
                 Card(
                   elevation: 4,
@@ -238,7 +215,6 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
                         border: InputBorder.none,
                       ),
                       items: [
-
                         DropdownMenuItem(value: 'Sports', child: Text('Sports')),
                         DropdownMenuItem(value: 'Vrund', child: Text('Vrund')),
                         DropdownMenuItem(value: 'Workshop', child: Text('Workshop')),
@@ -255,7 +231,6 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
                     ),
                   ),
                 ),
-
                 SizedBox(height: 16),
                 _buildTextField('Event Name', (value) => eventName = value, 'Enter event name'),
                 SizedBox(height: 16),
@@ -278,15 +253,22 @@ class _AddEventDetailPageState extends State<AddEventDetailPage> {
                 _buildTextField('Venue', (value) => venue = value, 'Enter venue'),
                 SizedBox(height: 16),
                 _buildTextField('Special Guest', (value) => guest = value, 'Enter guest name'),
+                SizedBox(height: 16),
+                _buildTextField('Email', (value) => email = value, 'Enter email'),
+                SizedBox(height: 16),
+                _buildTextField('Mobile', (value) => mobile = value, 'Enter mobile number'),
+                SizedBox(height: 16),
+                _buildTextField('Seats', (value) => seats = int.tryParse(value!), 'Enter available seats'),
               ],
             ),
           ),
         ),
+
       ),
     );
   }
 
-  Widget _buildTextField(String label, Function(String?) onSave, String validationMessage, {int maxLines = 1}) {
+  Widget _buildTextField(String label, Function(String?) onSave, String validationMessage, {int maxLines = 1, }) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

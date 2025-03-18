@@ -221,6 +221,7 @@
 // }
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'orgnizer/organizer_home.dart';
 import 'student/student_home.dart'; // Replace with actual student home page
 import 'admin/admin_home.dart'; // Replace with actual admin home page
 import 'signup_page.dart';
@@ -282,7 +283,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final response = await http.post(
-      Uri.parse('http://192.168.102.47:3000/api/users/login'), // Your API URL
+      Uri.parse('http://192.168.55.47:3000/api/users/login'), // Your API URL
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'password': password}),
     );
@@ -296,14 +297,16 @@ class _LoginPageState extends State<LoginPage> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isLoggedIn', true);
       await prefs.setString('email', email); // Store the email
-
+print(email);
       // Redirect based on the email
-      if (email == 'admin@charusat.edu.in') {
+      if (email.trim().toLowerCase() == 'admin@charusat.edu.in') {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => AddEventScreen()),
+          MaterialPageRoute(builder: (context) => AdminHome()),
         );
-      } else {
+      }
+
+      else {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),

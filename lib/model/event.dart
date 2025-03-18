@@ -13,6 +13,9 @@ class Event {
   final String guest;
   final String catagory;
   final String? image;
+  final String email;
+  final String mobile;
+  final int seats;
 
   Event({
     required this.id,
@@ -26,6 +29,9 @@ class Event {
     required this.guest,
     required this.catagory,
     this.image,
+    required this.email,
+    required this.mobile,
+    required this.seats,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -40,7 +46,10 @@ class Event {
       venue: json['venue'],
       guest: json['guest'],
       catagory: json['catagory'],
-      image: json['image'], // Nullable field
+      image: json['image'],
+      email: json['email'],
+      mobile: json['mobile'],
+      seats: json['seats'] ?? 0,  // Nullable field
     );
   }
   Map<String, dynamic> toJson() {
@@ -54,6 +63,9 @@ class Event {
       'venue': venue,
       'guest': guest,
       'catagory': catagory,
+      'email': email,      // ✅ Added Email
+      'mobile': mobile,    // ✅ Added Mobile
+      'seats': seats,
     };
   }
 }
@@ -67,6 +79,9 @@ String time = 'N/A';
 String venue = 'N/A';
 String guest = 'N/A';
 String catagory = 'N/A';
+String email = 'N/A';
+String mobile = 'N/A';
+int seats = 0;
 
 bool isLoading = true;
 Future<List<Event>> fetchEventData() async {

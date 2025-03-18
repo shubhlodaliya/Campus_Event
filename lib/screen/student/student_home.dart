@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+
 // import 'package:flutter_share/flutter_share.dart';
 import '../login_page.dart';
 import 'event_detail.dart';
@@ -22,6 +23,9 @@ class Event {
   final String guest;
   final String catagory;
   final String? image;
+  final String email;
+  final String mobile;
+  final int seats;
 
   Event({
     required this.id,
@@ -35,6 +39,9 @@ class Event {
     required this.guest,
     required this.catagory,
     this.image,
+    required this.email,
+    required this.mobile,
+    required this.seats,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -50,6 +57,9 @@ class Event {
       guest: json['guest'],
       catagory: json['catagory'],
       image: json['image'],
+      email: json['email'],
+      mobile: json['mobile'],
+      seats: json['seats'],
     );
   }
 }
@@ -91,7 +101,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<List<Event>> fetchEventDataFromApi() async {
-    const String apiUrl = "http://192.168.102.47:3000/api/events";
+    const String apiUrl = "http://192.168.55.47:3000/api/events";
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
       final Map<String, dynamic> json = jsonDecode(response.body);
@@ -103,15 +113,15 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> logout(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', false);
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => LoginPage()),
-      (route) => false,
-    );
-  }
+  // Future<void> logout(BuildContext context) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   await prefs.setBool('isLoggedIn', false);
+  //   Navigator.pushAndRemoveUntil(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => LoginPage()),
+  //     (route) => false,
+  //   );
+  // }
 
   void filterEvents(String query) {
     setState(() {
@@ -257,13 +267,13 @@ class _HomePageState extends State<HomePage> {
           // Already on HomePage
           break;
         case 1:
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => InterestedPage()),
           );
           break;
         case 2:
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => ProfilePage()),
           );
@@ -277,16 +287,22 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Color(0xFFFFF6E9),
       appBar: AppBar(
-        backgroundColor: Color(0xFF3B6B6D),
+        backgroundColor: Color(0xFF2A4F50), // Slightly darker shade
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             DropdownButton<String>(
-              value: selectedDepartment,
-              dropdownColor: Colors.white,
+              value: selectedDepartment.isNotEmpty ? selectedDepartment : 'All',
+              // Ensure a default value
+              dropdownColor: Color(0xFF3B6B6D),
+              // Dark background for contrast
               icon: Icon(Icons.arrow_drop_down, color: Colors.white),
               underline: SizedBox(),
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+              // Ensure selected value is visible
               onChanged: (String? newValue) {
                 if (newValue != null) {
                   filterEventsByDepartment(newValue);
@@ -296,63 +312,52 @@ class _HomePageState extends State<HomePage> {
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
-                  child: Text(
-                    value,
-                    style: TextStyle(color: Colors.black),
-                  ),
+                  child: Text(value,
+                      style: TextStyle(
+                          color: Colors
+                              .white)), // White text for better visibility
                 );
               }).toList(),
             ),
-            Text('All Events'),
-            IconButton(
-              icon: Icon(Icons.logout),
-              onPressed: () {
-                logout(context);
-              },
-              tooltip: 'Logout',
+            SizedBox(
+              width: 70,
             ),
+            Text('All Events',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
           ],
         ),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Color(0xFF3B6B6D),
+          color: Color(0xFF2A4F50),
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
+              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
-              spreadRadius: 2,
-              blurRadius: 5,
-            ),
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 3,
+                blurRadius: 7)
           ],
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
+              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
           child: BottomNavigationBar(
-            items: <BottomNavigationBarItem>[
+            items: [
               BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Home',
-              ),
+                  icon: Icon(Icons.home_filled, size: 28), label: 'Home'),
               BottomNavigationBarItem(
-                icon: Icon(Icons.star),
-                label: 'Interested',
-              ),
+                  icon: Icon(Icons.star, size: 28), label: 'Interested'),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: 'Profile',
-              ),
+                  icon: Icon(Icons.person, size: 28), label: 'Profile'),
             ],
             currentIndex: _selectedIndex1,
-            selectedItemColor: Colors.white,
-            unselectedItemColor: Colors.white.withOpacity(0.6),
-            backgroundColor: Color(0xFF3B6B6D),
+            selectedItemColor: Colors.orangeAccent,
+            unselectedItemColor: Colors.white.withOpacity(0.7),
+            backgroundColor: Color(0xFF2A4F50),
             onTap: _onItemTapped1,
           ),
         ),
@@ -363,35 +368,43 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Search Bar
               TextField(
                 controller: searchController,
                 onChanged: filterEvents,
                 decoration: InputDecoration(
-                  hintText: 'Search an Event ...',
-                  prefixIcon: Icon(Icons.search, color: Color(0xFF3B6B6D)),
+                  hintText: '🔍 Search an Event...',
+                  hintStyle: TextStyle(color: Colors.black54, fontSize: 16),
+                  prefixIcon: Icon(Icons.search, color: Color(0xFF2A4F50)),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(25),
+                    borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: Colors.grey[200],
+                  fillColor: Colors.white,
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  // boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 5, offset: Offset(0, 2))],
                 ),
               ),
               SizedBox(height: 20),
+
+              // Explore Category
               Text(
-                'Explore Category >',
+                '🏆 Explore Categories',
                 style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF3B6B6D),
-                ),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2A4F50)),
               ),
               SizedBox(height: 10),
+
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
                     for (var category in [
-                      'All', // Add 'All' option
+                      'All',
                       'Sports',
                       'Vrund',
                       'Workshop',
@@ -405,20 +418,20 @@ class _HomePageState extends State<HomePage> {
                           onPressed: () => filterEventsByCategory(category),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: selectedCategory == category
-                                ? Color(
-                                    0xFF2A4F50) // Darker shade when selected
-                                : Color(0xFF3B6B6D),
+                                ? Color(0xFF19514A)
+                                : Color(0xFF2A4F50),
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(15),
                             ),
-                            minimumSize: Size(100, 50),
                             elevation: selectedCategory == category ? 8 : 4,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
                           ),
                           child: Text(
                             category,
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: selectedCategory == category
                                   ? FontWeight.bold
                                   : FontWeight.normal,
@@ -430,13 +443,14 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               SizedBox(height: 20),
+
+              // Events List
               Text(
-                'All Department’s Event >>',
+                '📌 All Department Events',
                 style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF3B6B6D),
-                ),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2A4F50)),
               ),
               SizedBox(height: 10),
               Row(
@@ -456,33 +470,34 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: selectedDateRange == range
-                              ? Color(
-                                  0xFF3B6B6D) // Highlighted color when selected
-                              : Colors.black, // Default color
+                              ? Color(0xFF3B6B6D)
+                              : Colors.black,
                         ),
                       ),
                     ),
                 ],
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               isLoading
                   ? Center(child: CircularProgressIndicator())
                   : filteredEvents.isEmpty
-                      ? Center(child: Text('No events found'))
+                      ? Center(
+                          child: Text('No events found',
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.black54)))
                       : Column(
                           children: filteredEvents.map((event) {
                             return Card(
                               elevation: 5,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
+                                  borderRadius: BorderRadius.circular(15)),
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
                                   gradient: LinearGradient(
                                     colors: [
-                                      Color(0xFF3B6B6D),
-                                      Color(0xFF3B6B6D)
+                                      Color(0xFF2A4F50),
+                                      Color(0xFF19514A)
                                     ],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
@@ -494,25 +509,22 @@ class _HomePageState extends State<HomePage> {
                                   title: Text(
                                     event.eventName,
                                     style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white),
                                   ),
                                   subtitle: Text(
                                     '📅 Date: ${event.date}',
                                     style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white70,
-                                    ),
+                                        fontSize: 16, color: Colors.white70),
                                   ),
                                   trailing: ElevatedButton.icon(
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.white,
-                                      foregroundColor: Color(0xFF3B6B6D),
+                                      foregroundColor: Color(0xFF2A4F50),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
+                                          borderRadius:
+                                              BorderRadius.circular(12)),
                                     ),
                                     onPressed: () {
                                       Navigator.push(
@@ -550,7 +562,6 @@ class AuthService {
     return prefs.getString('token');
   }
 }
-
 
 class EventDetailsPage extends StatefulWidget {
   final Event event;
@@ -721,7 +732,13 @@ class EventDetailsPage extends StatefulWidget {
 
 class _EventDetailsPageState extends State<EventDetailsPage> {
   bool _isLoading = false;
+  int availableSeats = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    availableSeats = widget.event.seats; // Initialize seats count
+  }
 
   Future<void> _shareEventDetails() async {
     String eventDetails = '''
@@ -734,20 +751,16 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
 📍 Venue: ${widget.event.venue}
 🎤 Guest: ${widget.event.guest}
 📂 Category: ${widget.event.catagory}
+📩 Email: ${widget.event.email}
+📞 Mobile: ${widget.event.mobile}
+🪑 Seats Available: $availableSeats
 
 📝 Description: ${widget.event.description}
 
 Don't miss out! 🚀
 ''';
 
-
-
-    await Share.share(subject: "Event Details",sharePositionOrigin: Rect.fromLTWH(0, 0, 0, 0),eventDetails
-      // title: widget.event.eventName,
-      // text: eventDetails,ś
-      // linkUrl: '', // Add a registration link if available
-      // chooserTitle: 'Share Event Details',
-    );
+    await Share.share(eventDetails);
   }
 
   Future<void> _addToInterestedEvents() async {
@@ -756,9 +769,9 @@ Don't miss out! 🚀
     });
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> interestedEvents = prefs.getStringList('interestedEvents') ?? [];
+    List<String> interestedEvents =
+        prefs.getStringList('interestedEvents') ?? [];
 
-    // Convert event to JSON format and store it
     Map<String, String> eventData = {
       'eventName': widget.event.eventName,
       'organizedBy': widget.event.organizedBy,
@@ -781,6 +794,49 @@ Don't miss out! 🚀
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Event added to Interested Page!")),
     );
+  }
+
+  Future<void> _reserveSeat() async {
+    if (availableSeats <= 0) return;
+
+    final String apiUrl = "http://192.168.55.47:3000/api/events/${widget.event.id}/reserve";
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          "Content-Type": "application/json",
+          // "Authorization": "Bearer YOUR_AUTH_TOKEN", // If using authentication
+        },
+      );
+
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200 && data["success"] == true) {
+        setState(() {
+          availableSeats--; // Update seats count in UI
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Seat reserved successfully!")),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data["message"] ?? "Failed to reserve seat.")),
+        );
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Something went wrong!")),
+      );
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -811,7 +867,7 @@ Don't miss out! 🚀
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                                    Card(
+                  Card(
                     elevation: 4,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)),
@@ -848,6 +904,18 @@ Don't miss out! 🚀
                               icon: Icons.category,
                               label: 'Category',
                               value: widget.event.catagory),
+                          DetailRow(
+                              icon: Icons.email,
+                              label: 'Email',
+                              value: widget.event.email),
+                          DetailRow(
+                              icon: Icons.phone,
+                              label: 'Mobile',
+                              value: widget.event.mobile),
+                          DetailRow(
+                              icon: Icons.event_seat,
+                              label: 'Seats Available',
+                              value: availableSeats.toString()),
                         ],
                       ),
                     ),
@@ -855,7 +923,7 @@ Don't miss out! 🚀
                   SizedBox(height: 15),
                   Text('Description:',
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                      TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                   SizedBox(height: 5),
                   Text(widget.event.description,
                       style: TextStyle(fontSize: 16)),
@@ -891,7 +959,7 @@ Don't miss out! 🚀
                         ),
                       ),
                       ElevatedButton.icon(
-                        onPressed: _shareEventDetails, // Call the share function
+                        onPressed: _shareEventDetails,
                         icon: Icon(Icons.share),
                         label: Text("Share"),
                         style: ElevatedButton.styleFrom(
@@ -902,8 +970,19 @@ Don't miss out! 🚀
                           ),
                         ),
                       ),
-
                     ],
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: availableSeats > 0 ? _reserveSeat : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      minimumSize: Size(double.infinity, 50),
+                    ),
+                    child: Text("Reserve My Seat", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),
@@ -914,6 +993,7 @@ Don't miss out! 🚀
     );
   }
 }
+
 
 class DetailRow extends StatelessWidget {
   final IconData icon;
