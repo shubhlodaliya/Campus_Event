@@ -227,6 +227,9 @@ import 'admin/admin_home.dart'; // Replace with actual admin home page
 import 'signup_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+
 
 class LoginPage extends StatefulWidget {
   @override
@@ -283,7 +286,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final response = await http.post(
-      Uri.parse('http://192.168.55.47:3000/api/users/login'), // Your API URL
+      Uri.parse('http://192.168.137.164:3000/api/users/login'), // Your API URL
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'password': password}),
     );
@@ -298,6 +301,8 @@ class _LoginPageState extends State<LoginPage> {
       await prefs.setBool('isLoggedIn', true);
       await prefs.setString('email', email); // Store the email
 print(email);
+      await prefs.setString('jwt_token', jsonDecode(response.body)['token']);
+
       // Redirect based on the email
       if (email.trim().toLowerCase() == 'admin@charusat.edu.in') {
         Navigator.pushReplacement(
@@ -317,6 +322,17 @@ print(email);
     }
   }
 
+  final storage = FlutterSecureStorage();
+
+  Future<void> saveToken(String token) async {
+    await storage.write(key: "jwt_token", value: token);
+  }
+  Future<String?> getToken() async {
+    return await storage.read(key: "jwt_token");
+  }
+  Future<void> removeToken() async {
+    await storage.delete(key: "jwt_token");
+  }
 
   void showCustomAlert(BuildContext context, String message) {
     showDialog(

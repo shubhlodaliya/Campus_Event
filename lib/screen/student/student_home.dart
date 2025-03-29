@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<List<Event>> fetchEventDataFromApi() async {
-    const String apiUrl = "http://192.168.55.47:3000/api/events";
+    const String apiUrl = "http://192.168.137.164:3000/api/events";
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
       final Map<String, dynamic> json = jsonDecode(response.body);
@@ -730,9 +730,275 @@ class EventDetailsPage extends StatefulWidget {
 // }
 
 
+// class _EventDetailsPageState extends State<EventDetailsPage> {
+//   bool _isLoading = false;
+//   int availableSeats = 0;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     availableSeats = widget.event.seats; // Initialize seats count
+//   }
+//
+//   Future<void> _shareEventDetails() async {
+//     String eventDetails = '''
+// 📢 *${widget.event.eventName}* 📢
+//
+// 🔹 Organized By: ${widget.event.organizedBy}
+// 🏫 Department: ${widget.event.department}
+// 📅 Date: ${widget.event.date}
+// ⏰ Time: ${widget.event.time}
+// 📍 Venue: ${widget.event.venue}
+// 🎤 Guest: ${widget.event.guest}
+// 📂 Category: ${widget.event.catagory}
+// 📩 Email: ${widget.event.email}
+// 📞 Mobile: ${widget.event.mobile}
+// 🪑 Seats Available: $availableSeats
+//
+// 📝 Description: ${widget.event.description}
+//
+// Don't miss out! 🚀
+// ''';
+//
+//     await Share.share(eventDetails);
+//   }
+//
+//   Future<void> _addToInterestedEvents() async {
+//     setState(() {
+//       _isLoading = true;
+//     });
+//
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     List<String> interestedEvents =
+//         prefs.getStringList('interestedEvents') ?? [];
+//
+//     Map<String, String> eventData = {
+//       'eventName': widget.event.eventName,
+//       'organizedBy': widget.event.organizedBy,
+//       'department': widget.event.department,
+//       'date': widget.event.date,
+//       'time': widget.event.time,
+//       'venue': widget.event.venue,
+//       'guest': widget.event.guest,
+//       'category': widget.event.catagory,
+//       'description': widget.event.description,
+//     };
+//
+//     interestedEvents.add(jsonEncode(eventData));
+//     await prefs.setStringList('interestedEvents', interestedEvents);
+//
+//     setState(() {
+//       _isLoading = false;
+//     });
+//
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(content: Text("Event added to Interested Page!")),
+//     );
+//   }
+//
+//   Future<void> _reserveSeat() async {
+//     if (availableSeats <= 0) return;
+//
+//     final String apiUrl = "http://192.168.137.164:3000/api/events/${widget.event.id}/reserve";
+//
+//     setState(() {
+//       _isLoading = true;
+//     });
+//
+//     try {
+//       final response = await http.post(
+//         Uri.parse(apiUrl),
+//         headers: {
+//           "Content-Type": "application/json",
+//           // "Authorization": "Bearer YOUR_AUTH_TOKEN", // If using authentication
+//         },
+//       );
+//
+//       final data = jsonDecode(response.body);
+//       if (response.statusCode == 200 && data["success"] == true) {
+//         setState(() {
+//           availableSeats--; // Update seats count in UI
+//         });
+//
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text("Seat reserved successfully!")),
+//         );
+//       } else {
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text(data["message"] ?? "Failed to reserve seat.")),
+//         );
+//       }
+//     } catch (error) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text("Something went wrong!")),
+//       );
+//     }
+//
+//     setState(() {
+//       _isLoading = false;
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text(widget.event.eventName,
+//             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+//         backgroundColor: Colors.blueAccent,
+//       ),
+//       body: SingleChildScrollView(
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             ClipRRect(
+//               borderRadius: BorderRadius.only(
+//                   bottomLeft: Radius.circular(20),
+//                   bottomRight: Radius.circular(20)),
+//               child: Image(
+//                 image: AssetImage('assets/images/login1.png'),
+//                 width: double.infinity,
+//                 height: 220,
+//                 fit: BoxFit.cover,
+//               ),
+//             ),
+//             Padding(
+//               padding: const EdgeInsets.all(16.0),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Card(
+//                     elevation: 4,
+//                     shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(15)),
+//                     child: Padding(
+//                       padding: EdgeInsets.all(12),
+//                       child: Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           DetailRow(
+//                               icon: Icons.business,
+//                               label: 'Organized By',
+//                               value: widget.event.organizedBy),
+//                           DetailRow(
+//                               icon: Icons.school,
+//                               label: 'Department',
+//                               value: widget.event.department),
+//                           DetailRow(
+//                               icon: Icons.calendar_today,
+//                               label: 'Date',
+//                               value: widget.event.date),
+//                           DetailRow(
+//                               icon: Icons.access_time,
+//                               label: 'Time',
+//                               value: widget.event.time),
+//                           DetailRow(
+//                               icon: Icons.location_on,
+//                               label: 'Venue',
+//                               value: widget.event.venue),
+//                           DetailRow(
+//                               icon: Icons.person,
+//                               label: 'Guest',
+//                               value: widget.event.guest),
+//                           DetailRow(
+//                               icon: Icons.category,
+//                               label: 'Category',
+//                               value: widget.event.catagory),
+//                           DetailRow(
+//                               icon: Icons.email,
+//                               label: 'Email',
+//                               value: widget.event.email),
+//                           DetailRow(
+//                               icon: Icons.phone,
+//                               label: 'Mobile',
+//                               value: widget.event.mobile),
+//                           DetailRow(
+//                               icon: Icons.event_seat,
+//                               label: 'Seats Available',
+//                               value: availableSeats.toString()),
+//                         ],
+//                       ),
+//                     ),
+//                   ),
+//                   SizedBox(height: 15),
+//                   Text('Description:',
+//                       style:
+//                       TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+//                   SizedBox(height: 5),
+//                   Text(widget.event.description,
+//                       style: TextStyle(fontSize: 16)),
+//                   SizedBox(height: 20),
+//                   Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                     children: [
+//                       ElevatedButton.icon(
+//                         onPressed: _addToInterestedEvents,
+//                         icon: _isLoading
+//                             ? SizedBox(
+//                           width: 20,
+//                           height: 20,
+//                           child: CircularProgressIndicator(
+//                             strokeWidth: 2,
+//                             valueColor: AlwaysStoppedAnimation<Color>(
+//                                 Colors.blueAccent),
+//                           ),
+//                         )
+//                             : Icon(Icons.star, color: Colors.blueAccent),
+//                         label: Text(
+//                           _isLoading ? "Adding..." : "Interested",
+//                           style: TextStyle(color: Colors.blueAccent),
+//                         ),
+//                         style: ElevatedButton.styleFrom(
+//                           backgroundColor: Colors.white,
+//                           elevation: 0,
+//                           shape: RoundedRectangleBorder(
+//                             borderRadius: BorderRadius.circular(8),
+//                           ),
+//                           padding:
+//                           EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+//                         ),
+//                       ),
+//                       ElevatedButton.icon(
+//                         onPressed: _shareEventDetails,
+//                         icon: Icon(Icons.share),
+//                         label: Text("Share"),
+//                         style: ElevatedButton.styleFrom(
+//                           backgroundColor: Colors.white,
+//                           foregroundColor: Colors.blueAccent,
+//                           shape: RoundedRectangleBorder(
+//                             borderRadius: BorderRadius.circular(10),
+//                           ),
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                   SizedBox(height: 20),
+//                   ElevatedButton(
+//                     onPressed: availableSeats > 0 ? _reserveSeat : null,
+//                     style: ElevatedButton.styleFrom(
+//                       backgroundColor: Colors.green,
+//                       foregroundColor: Colors.white,
+//                       padding: EdgeInsets.symmetric(vertical: 12),
+//                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+//                       minimumSize: Size(double.infinity, 50),
+//                     ),
+//                     child: Text("Reserve My Seat", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
 class _EventDetailsPageState extends State<EventDetailsPage> {
   bool _isLoading = false;
   int availableSeats = 0;
+  bool isInterested = false; // To track if the event is marked as interested
 
   @override
   void initState() {
@@ -768,38 +1034,53 @@ Don't miss out! 🚀
       _isLoading = true;
     });
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> interestedEvents =
-        prefs.getStringList('interestedEvents') ?? [];
 
-    Map<String, String> eventData = {
-      'eventName': widget.event.eventName,
-      'organizedBy': widget.event.organizedBy,
-      'department': widget.event.department,
-      'date': widget.event.date,
-      'time': widget.event.time,
-      'venue': widget.event.venue,
-      'guest': widget.event.guest,
-      'category': widget.event.catagory,
-      'description': widget.event.description,
-    };
+    final String apiUrl = "http://192.168.137.164:3000/api/events/${widget.event.id}/interested";
 
-    interestedEvents.add(jsonEncode(eventData));
-    await prefs.setStringList('interestedEvents', interestedEvents);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String email = prefs.getString('email') ?? '';
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({
+          "eventId": widget.event.id,
+          "email": email,
+          // "userId": "12345", // Replace with actual user ID if required
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200 && data["success"] == true) {
+        setState(() {
+          isInterested = true; // Update UI to show event is marked as interested
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Event added to Interested Page!")),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data["message"] ?? "Failed to add to Interested Page.")),
+        );
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Something went wrong!")),
+      );
+    }
 
     setState(() {
       _isLoading = false;
     });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Event added to Interested Page!")),
-    );
   }
 
   Future<void> _reserveSeat() async {
     if (availableSeats <= 0) return;
 
-    final String apiUrl = "http://192.168.55.47:3000/api/events/${widget.event.id}/reserve";
+    final String apiUrl = "http://192.168.137.164:3000/api/events/${widget.event.id}/reserve";
 
     setState(() {
       _isLoading = true;
@@ -810,7 +1091,6 @@ Don't miss out! 🚀
         Uri.parse(apiUrl),
         headers: {
           "Content-Type": "application/json",
-          // "Authorization": "Bearer YOUR_AUTH_TOKEN", // If using authentication
         },
       );
 
@@ -943,9 +1223,13 @@ Don't miss out! 🚀
                                 Colors.blueAccent),
                           ),
                         )
-                            : Icon(Icons.star, color: Colors.blueAccent),
+                            : Icon(
+                            isInterested ? Icons.star : Icons.star_border,
+                            color: Colors.blueAccent),
                         label: Text(
-                          _isLoading ? "Adding..." : "Interested",
+                          _isLoading
+                              ? "Adding..."
+                              : (isInterested ? "Interested" : "Mark Interested"),
                           style: TextStyle(color: Colors.blueAccent),
                         ),
                         style: ElevatedButton.styleFrom(
@@ -974,7 +1258,9 @@ Don't miss out! 🚀
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: availableSeats > 0 ? _reserveSeat : null,
+                    onPressed: () {
+                      _reserveSeat(); // Call the function when button is pressed
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       foregroundColor: Colors.white,
@@ -984,7 +1270,9 @@ Don't miss out! 🚀
                     ),
                     child: Text("Reserve My Seat", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
+
                 ],
+
               ),
             ),
           ],

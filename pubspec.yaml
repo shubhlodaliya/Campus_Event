@@ -42,6 +42,7 @@ dependencies:
   firebase_auth: ^4.6.0
   mongo_dart: ^0.9.0
   share_plus:
+  flutter_secure_storage: ^9.2.4
 
 
 
