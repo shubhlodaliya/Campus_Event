@@ -547,7 +547,7 @@ Don't miss out! 🚀
   Future<void> _reserveSeat() async {
     if (availableSeats <= 0) return;
 
-    final String apiUrl = "http://192.168.137.164:3000/api/events/${widget.event.id}/reserve";
+    final String apiUrl = "http://172.21.174.47:3000/api/events/${widget.event.id}/reserve";
 
     setState(() {
       _isLoading = true;

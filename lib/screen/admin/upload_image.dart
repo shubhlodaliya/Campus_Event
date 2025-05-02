@@ -40,7 +40,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
 
     try {
       // Replace 'http://192.168.179.47:3000/api/upload' with your API endpoint
-      final url = Uri.parse('http://192.168.102.47:3000/api/upload');
+      final url = Uri.parse('http://172.21.174.47:3000/api/upload');
 
       // Create a multipart request
       var request = http.MultipartRequest('POST', url);

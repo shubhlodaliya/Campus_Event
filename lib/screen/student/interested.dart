@@ -250,7 +250,7 @@ class _InterestedPageState extends State<InterestedPage> {
       print("Token: $token"); // Debugging: Print token to verify
 
       final response = await http.get(
-        Uri.parse('http://192.168.137.164:3000/api/events/interested'), // Ensure this is the correct API URL
+        Uri.parse('http://172.21.174.47:3000/api/events/interested'), // Ensure this is the correct API URL
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json', // Ensure proper content type
